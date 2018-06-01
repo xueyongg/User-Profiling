@@ -1,0 +1,22 @@
+{
+  "name": "bambu-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xueyongg/User-Profiling.git"
+  },
+  "author": "Phua Xue Yong Joshua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xueyongg/User-Profiling/issues"
+  },
+  "homepage": "https://github.com/xueyongg/User-Profiling#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
