@@ -7,10 +7,19 @@ const router = express.Router();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+router.all("/", (req, res, next) => {
+  res.json({
+    code: 400,
+    status: "Bad Request",
+    internalMessage: "API version is missing. GET /api/v1/users"
+  });
+  next();
+});
+
 // Add a new user based on his loan and saving options
 // loan (integer)
 // saving (integer)
-router.post("/v1/users", (req, res) => {
+router.post("/v1/users", (req, res, next) => {
   //   console.log(req);
   let errors = requestIsValid(req);
   let reply = {};
