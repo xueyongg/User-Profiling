@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 // DB set up
 const MongoClient = require("mongodb").MongoClient;
 const assert = require("assert");
+
 // Connection URL
 const url = "mongodb://localhost:27017";
 
@@ -27,7 +28,6 @@ MongoClient.connect(
   }
 );
 
-//
 router.all("/", (req, res, next) => {
   res.json({
     code: 400,
@@ -40,7 +40,7 @@ router.all("/", (req, res, next) => {
 // Add a new user based on his loan and saving options
 // loan (integer)
 // saving (integer)
-router.post("/v1/users", (req, res, next) => {
+router.post("/v1/users", (req, res) => {
   //   console.log(req);
   let errors = requestIsValid(req);
   let reply = {};
