@@ -7,11 +7,32 @@ const router = express.Router();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// DB set up
+const MongoClient = require("mongodb").MongoClient;
+const assert = require("assert");
+// Connection URL
+const url = "mongodb://localhost:27017";
+
+// Database Name
+const dbName = "mydb";
+
+// Use connect method to connect to the server
+let collection;
+MongoClient.connect(
+  url,
+  (err, client) => {
+    assert.equal(null, err);
+    console.log("Connected successfully to server");
+    collection = client.db(dbName).collection("users");
+  }
+);
+
+//
 router.all("/", (req, res, next) => {
   res.json({
     code: 400,
     status: "Bad Request",
-    internalMessage: "API version is missing. GET /api/v1/users"
+    internalMessage: "API version is missing. POST /api/v1/users"
   });
   next();
 });
@@ -26,18 +47,20 @@ router.post("/v1/users", (req, res, next) => {
 
   if (errors.length !== 0) {
     reply.errors = errors;
+    res.json(reply);
   } else {
     let user = processRequest(req);
-    reply = {
-      code: 200,
-      status: "OK",
-      userMessage: "User created",
-      profile: user.profile
-    };
+    collection.insertOne(user, (err, result) => {
+      if (err) res.json(err);
+      console.log("1 user inserted");
+      res.json({
+        code: 200,
+        status: "OK",
+        userMessage: "User created",
+        profile: result.ops[0].profile
+      });
+    });
   }
-
-  res.json(reply);
-  next();
 });
 
 // API will handle any request that ends with /api
@@ -91,14 +114,6 @@ function requestIsValid(req) {
     });
   }
 
-  // Check if the user has been registered before already. If so, error
-  if (false) {
-    errors.push({
-      code: 400,
-      InternalMessage: "Bad Request",
-      UserMessage: "User already exist"
-    });
-  }
   return errors;
 }
 
@@ -177,11 +192,9 @@ function processRequest(req) {
     case 10:
       user.profile = "A";
       break;
-
     default:
       user.profile = "unprofiled";
       break;
   }
-
   return user;
 }
