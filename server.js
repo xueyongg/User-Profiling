@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 const router = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,7 +32,34 @@ router.all("/", (req, res, next) => {
   res.json({
     code: 400,
     status: "Bad Request",
-    internalMessage: "API version is missing. POST /api/v1/users"
+    internalMessage: "API version is missing. 'POST /api/v1/users' instead"
+  });
+  next();
+});
+
+router.all("/v1", (req, res, next) => {
+  res.json({
+    code: 400,
+    status: "Bad Request",
+    internalMessage: "/users is missing. 'POST /api/v1/users' instead"
+  });
+  next();
+});
+
+router.get("/v1/users", (req, res, next) => {
+  res.json({
+    code: 400,
+    status: "Bad Request",
+    internalMessage: "Do not use GET. 'POST /api/v1/users' instead"
+  });
+  next();
+});
+
+router.all("/v1/user", (req, res, next) => {
+  res.json({
+    code: 400,
+    status: "Bad Request",
+    internalMessage: "Method incorrect. Use'POST /api/v1/users' instead"
   });
   next();
 });
@@ -122,55 +149,52 @@ function processRequest(req) {
   loan = Number(loan);
   saving = Number(saving);
   let user = { loan_score: 0, saving_score: 0, profile: "" };
-  if (loan) {
-    switch (loan) {
-      case 0:
-        user.loan_score = 5;
-        break;
-      case 2000:
-        user.loan_score = 4;
-        break;
-      case 4000:
-        user.loan_score = 3;
-        break;
-      case 6000:
-        user.loan_score = 2;
-        break;
-      case 8000:
-        user.loan_score = 1;
-        break;
-      case 10000:
-        user.loan_score = 0;
-        break;
-      default:
-        user.loan_score = 0;
-        break;
-    }
+
+  switch (loan) {
+    case 0:
+      user.loan_score = 5;
+      break;
+    case 2000:
+      user.loan_score = 4;
+      break;
+    case 4000:
+      user.loan_score = 3;
+      break;
+    case 6000:
+      user.loan_score = 2;
+      break;
+    case 8000:
+      user.loan_score = 1;
+      break;
+    case 10000:
+      user.loan_score = 0;
+      break;
+    default:
+      user.loan_score = 0;
+      break;
   }
-  if (saving) {
-    switch (saving) {
-      case 0:
-        user.saving_score = 0;
-        break;
-      case 2000:
-        user.saving_score = 1;
-        break;
-      case 4000:
-        user.saving_score = 2;
-        break;
-      case 6000:
-        user.saving_score = 3;
-        break;
-      case 8000:
-        user.saving_score = 4;
-        break;
-      case 10000:
-        user.saving_score = 5;
-        break;
-      default:
-        user.saving_score = 0;
-        break;
-    }
+  switch (saving) {
+    case 0:
+      user.saving_score = 0;
+      break;
+    case 2000:
+      user.saving_score = 1;
+      break;
+    case 4000:
+      user.saving_score = 2;
+      break;
+    case 6000:
+      user.saving_score = 3;
+      break;
+    case 8000:
+      user.saving_score = 4;
+      break;
+    case 10000:
+      user.saving_score = 5;
+      break;
+    default:
+      user.saving_score = 0;
+      break;
   }
 
   let acquired_score = user.saving_score + user.loan_score;
